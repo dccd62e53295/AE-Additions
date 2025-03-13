@@ -7,7 +7,7 @@ buildscript {
         maven { url "https://files.minecraftforge.net/maven"}
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2+'
 //        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
@@ -194,6 +194,11 @@ task apiJar(type: Jar) {
     include 'com/the9grounds/aeadditions/api/**'
 }
 
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
 if (System.getenv("CURSEFORGE_API_KEY") != null) {
     curseforge {
         apiKey = System.getenv("CURSEFORGE_API_KEY")
@@ -226,9 +231,13 @@ if (System.getenv("CURSEFORGE_API_KEY") != null) {
 sourceJar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 apiJar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 jar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+deobfJar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 artifacts {
+    archives deobfJar
+    archives sourceJar
     archives apiJar
+    archives jar
 }
 
 def getBuildNumber() {
